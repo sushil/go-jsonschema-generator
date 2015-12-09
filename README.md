@@ -1,7 +1,7 @@
 go-jsonschema-generator
 =======================
 
-Originally based on: https://github.com/mcuadros/go-jsonschema-generator
+Originally based on: https://github.com/mcuadros/go-jsonschema-generator. This version adds support to put "description" field base on the godoc on exported types.
 
 Basic [json-schema](http://json-schema.org/) generator based on Go types, for easy interchange of Go structures across languages.
 
