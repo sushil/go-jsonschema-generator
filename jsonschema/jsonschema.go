@@ -12,12 +12,16 @@ import (
 
 const DEFAULT_SCHEMA = "http://json-schema.org/schema#"
 
+var commentMap map[string]string
+
+// Document is the json schema document
 type Document struct {
+	// Schema is the json schema
 	Schema string `json:"$schema,omitempty"`
 	property
 }
 
-// Reads the variable structure into the JSON-Schema Document
+// Read reads the variable structure into the JSON-Schema Document
 func (d *Document) Read(variable interface{}) {
 	d.setDefaultSchema()
 
@@ -48,6 +52,7 @@ type property struct {
 	Properties           map[string]*property `json:"properties,omitempty"`
 	Required             []string             `json:"required,omitempty"`
 	AdditionalProperties bool                 `json:"additionalProperties,omitempty"`
+	Description          string               `json:"description",omitempty`
 }
 
 type item struct {
@@ -113,6 +118,11 @@ func (p *property) readFromStruct(t reflect.Type) {
 		p.Properties[name] = &property{}
 		p.Properties[name].read(field.Type, opts)
 
+		comment, ok := commentMap[field.Name]
+		if ok {
+			p.Properties[name].Description = comment
+		}
+
 		if !opts.Contains("omitempty") {
 			p.Required = append(p.Required, name)
 		}
@@ -174,4 +184,8 @@ func (o tagOptions) Contains(optionName string) bool {
 		s = next
 	}
 	return false
+}
+
+func SetCommentMap(cm map[string]string) {
+	commentMap = cm
 }
